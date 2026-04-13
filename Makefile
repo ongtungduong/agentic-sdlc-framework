@@ -36,14 +36,14 @@ scan-deep: ## Run AgentShield deep scan (Opus + streaming)
 # ── Review (3-layer) ──────────────────────────────────────────────────────────
 
 verify: ## Layer 2: Check implementation against OpenSpec specs
-	openspec verify
+	openspec validate
 
 review: ## Run 3-layer review (methodology + spec + re-index)
 	@echo "==> Layer 1: Methodology review"
 	@echo "    Run in Claude Code: /superpowers:code-review"
 	@echo ""
 	@echo "==> Layer 2: Spec compliance"
-	openspec verify
+	openspec validate
 	@echo ""
 	@echo "==> Layer 3: Re-index knowledge graph"
 	$(MAKE) index
