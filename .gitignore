@@ -34,3 +34,6 @@ Thumbs.db
 .env.*
 !.env.example
 .gitnexus
+
+# Git worktrees
+.worktrees/
