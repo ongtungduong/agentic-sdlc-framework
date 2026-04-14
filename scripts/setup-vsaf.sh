@@ -378,6 +378,11 @@ install_mempalace() {
 # ---------------------------------------------------------------------------
 print_superpowers_instructions() {
     step "Superpowers (manual step)"
+    local SP_DIR="$HOME/.claude/plugins/cache/claude-plugins-official/superpowers"
+    if [ -d "$SP_DIR" ]; then
+        ok "Superpowers already installed"
+        return
+    fi
     echo ""
     echo "  Superpowers requires an interactive Claude Code session."
     echo "  Run this command inside Claude Code:"
