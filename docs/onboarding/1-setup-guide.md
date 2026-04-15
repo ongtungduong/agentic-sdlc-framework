@@ -3,6 +3,16 @@
 > A complete guide for developers new to the VSAF framework.
 > Covers what VSAF is, how to install it, and how to use it day-to-day.
 
+### Related Docs
+
+| Doc | Purpose |
+|---|---|
+| [README.md](../../README.md) | Project overview, quickstart, tool list |
+| [2-workflow-guide.md](2-workflow-guide.md) | Advanced usage — deep dives, playbooks, anti-patterns, JWT demo |
+| [3-cheatsheet.md](3-cheatsheet.md) | 1-page command reference (print and pin) |
+| [4-milestones.md](4-milestones.md) | Day 1 / Week 1 / Month 1 milestones |
+| [5-faq.md](5-faq.md) | Mindset questions every new dev asks |
+
 ---
 
 ## Table of Contents
@@ -411,267 +421,49 @@ If either check fails, the push is blocked.
 
 ## 5. Your First Project — A Walkthrough
 
-This section walks through the 10-step workflow using a concrete example: adding
-a `/health` endpoint to a web service. Follow along to see how the tools work
-together.
+This section provides a compact summary of the 10-step workflow. For a detailed,
+command-by-command walkthrough with a real feature (JWT refresh token rotation),
+see **[2-workflow-guide.md](2-workflow-guide.md) Section 4**.
 
-### Step 1: Understand the Codebase
+For structured Day 1 / Week 1 / Month 1 milestones, see
+**[4-milestones.md](4-milestones.md)**.
 
-Before writing any code, get familiar with what exists.
-
-```bash
-# Open the Graphify report to understand the codebase structure
-cat graphify-out/GRAPH_REPORT.md
-
-# Start the GitNexus web UI to browse interactively
-gitnexus serve
-
-# Ask about structural issues
-/graphify query "what are the god nodes?"
-
-# Trace how two components are connected
-/graphify path AuthService DatabasePool
-
-# Check if the team made relevant past decisions
-# (Claude Code will auto-search MemPalace when you ask)
-"Has anyone worked on health checks before?"
-```
-
-> **Rule:** Do not modify code on day one. Spend this time understanding.
-
-### Step 2: Scope the Work
-
-Use the BMAD Analyst agent to clarify what needs to be done:
+### Standard Flow (Features)
 
 ```
-*agent analyst
+Step 1:  Read graphify-out/GRAPH_REPORT.md + mempalace_search
+Step 2:  *agent analyst → *workflow-init → Standard
+Step 3:  *agent pm (PRD) → *agent architect (arch doc)
+Step 4:  /opsx:propose <feature> → /opsx:ff → commit specs
+Step 5:  gitnexus_impact on every symbol you'll touch
+Step 6:  /superpowers:brainstorm → /superpowers:write-plan
+Step 7:  /superpowers:execute-plan (TDD, 1 commit per task)
+Step 8:  /superpowers:code-review → make verify → make index → make scan
+Step 9:  git push (pre-push hook validates automatically)
+Step 10: make archive → make mine (after merge)
 ```
 
-The Analyst will ask clarifying questions about your feature: who needs it, what
-the acceptance criteria are, and how complex it is.
+### Quick Flow (Bug Fixes)
 
-Then initialize the workflow:
-
-```
-*workflow-init
-```
-
-This asks you to choose a flow:
-
-- **Quick Flow** — for bug fixes and small changes. Skips Steps 3–5 (planning,
-  specs, impact analysis) and goes straight to brainstorming (Step 6).
-- **Standard Flow** — for typical features. Goes through all 10 steps.
-- **Enterprise Flow** — for large, cross-team changes. Adds extra review gates.
-
-For our `/health` endpoint, Standard Flow is appropriate.
-
-If you are unsure what to do next at any point, run:
+Skip Steps 3–5. Everything else is mandatory.
 
 ```
-bmad-help
+Step 1:  Read graph report + MemPalace search
+Step 2:  *agent analyst → *workflow-init → Quick
+Step 6:  /superpowers:brainstorm → /superpowers:write-plan
+Step 7:  /superpowers:execute-plan
+Step 8:  3-layer review (mandatory even for bug fixes)
+Step 9:  git push
+Step 10: make archive (if specs were involved)
 ```
 
-### Step 3: Planning (Skip for Quick Flow)
+### Key Rules
 
-Create the planning documents using BMAD agents:
-
-```bash
-# PM agent creates a PRD (Product Requirements Document)
-# with functional requirements, non-functional requirements, and epics
-*agent pm
-
-# Architect agent creates the architecture document
-# with component diagrams, API contracts, and data flow
-*agent architect
-
-# Product Owner creates sprint stories from the PRD
-*agent po
-
-# Commit the planning docs
-git add docs/ && git commit -m "feat: PRD + arch for health-endpoint"
-```
-
-Each agent is interactive — it will ask questions and present drafts for your
-approval.
-
-### Step 4: Specs (Skip for Quick Flow)
-
-Convert the plan into formal, machine-verifiable specs with OpenSpec:
-
-```bash
-# Create a proposal for the feature
-/opsx:propose health-endpoint
-
-# Fast-forward: auto-generate all spec documents from the proposal
-/opsx:ff
-```
-
-This produces structured files in the `openspec/` directory:
-
-- `proposal.md` — What is being built and why
-- `specs/` — Detailed specifications (inputs, outputs, edge cases)
-- `design.md` — Technical design decisions
-- `tasks.md` — Atomic tasks (each should take 2–5 minutes)
-
-Review the generated tasks. Each one must include edge cases and a verification
-step (a way to confirm the task was completed correctly).
-
-```bash
-git add openspec/ && git commit -m "spec: health-endpoint"
-```
-
-### Step 5: Impact Analysis (Skip for Quick Flow)
-
-Before writing code, check what your changes might affect:
-
-```bash
-# Ask GitNexus what depends on the files you plan to change
-"What breaks if I change the router configuration?"
-
-# Trace the dependency path between the components you'll touch
-/graphify path Router HealthController
-
-# Check if anyone tried this before and what happened
-mempalace search "health endpoint"
-```
-
-**Decision point:** If the impact spans more than 3 modules, split into smaller
-PRs. If you discover new edge cases, go back to Step 4 and update the specs.
-
-### Step 6: Brainstorm + Plan
-
-Now use Superpowers to design the implementation:
-
-```bash
-# Brainstorm: Claude asks you Socratic questions about your approach,
-# challenges assumptions, and suggests alternatives
-/superpowers:brainstorm
-
-# Generate a detailed execution plan with bite-sized tasks
-/superpowers:write-plan
-```
-
-The plan will look something like:
-
-```
-Task 1: Create HealthController class
-  - Write test (RED)
-  - Implement (GREEN)
-  - Refactor
-  - Verify: test passes, endpoint responds with 200
-
-Task 2: Add database connectivity check
-  - Write test (RED)
-  - Implement (GREEN)
-  - Refactor
-  - Verify: returns degraded status when DB is down
-...
-```
-
-**Important:** Review every task before approving the plan. Each task must have a
-verification step. Do not approve a plan with vague tasks like "implement the
-feature."
-
-### Step 7: Execute
-
-Run the plan:
-
-```bash
-/superpowers:execute-plan
-```
-
-Superpowers executes each task using a RED → GREEN → REFACTOR cycle:
-
-1. **RED** — Write a failing test for the task
-2. **GREEN** — Write the minimum code to make the test pass
-3. **REFACTOR** — Clean up the code while keeping tests green
-
-After each task:
-- All tests must pass.
-- One commit is made (e.g., `feat: add HealthController with basic check`).
-
-ECC hooks run passively in the background during this step — they will
-automatically block any commit that contains secrets or modifies protected
-files.
-
-> **3-Strike Rule:** If the same task fails 3 times in a row, stop and trigger
-> an architectural review. The task may need to be redesigned.
-
-### Step 8: 3-Layer Self-Review (Mandatory)
-
-Before pushing, run three review passes:
-
-```bash
-# Layer 1: Methodology compliance
-# Reviews your code against the plan, coding standards, and architecture
-/superpowers:code-review
-
-# Layer 2: Spec compliance
-# Checks that your implementation matches the OpenSpec specs
-make verify
-
-# Layer 3: Knowledge graph sync
-# Re-indexes the codebase so the knowledge graph reflects your changes
-make index
-```
-
-**If Layer 2 fails** (implementation does not match specs), go back to Step 7
-and fix the code.
-
-**After any configuration change**, also run a security scan:
-
-```bash
-npx ecc-agentshield scan
-```
-
-### Step 9: Push the PR
-
-```bash
-git push origin feature/health-endpoint
-```
-
-The pre-push hook automatically runs `make verify` and `make scan`. If either
-fails, the push is blocked until you fix the issue.
-
-Your PR description must include:
-
-1. **Link to the OpenSpec proposal** — so reviewers can check code against spec
-2. **Impact summary** — which modules are affected and how
-3. **Test results** — confirmation that all tests pass
-
-### Step 10: Archive + Ship
-
-After the PR is merged:
-
-```bash
-# Archive the specs (moves them to a historical record)
-make archive
-
-# Mine recent conversations for architecture decisions worth preserving
-make mine
-
-# Tag and deploy
-git tag v1.2.0 && git push --tags
-```
-
-`make archive` automatically re-indexes the knowledge graph after archiving. The
-`make mine` command extracts decisions from your conversation logs and stores
-them in MemPalace for future reference.
-
-### Quick Flow Summary (Bug Fixes)
-
-For bug fixes and small changes, skip Steps 3–5:
-
-```
-Step 1: Understand     → Read the graph report, search MemPalace
-Step 2: Scope          → *agent analyst → *workflow-init → choose "Quick"
-Step 6: Brainstorm     → /superpowers:brainstorm
-Step 6: Plan           → /superpowers:write-plan
-Step 7: Execute        → /superpowers:execute-plan
-Step 8: Review         → 3-layer review (mandatory even for bug fixes)
-Step 9: Push           → git push
-Step 10: Archive       → make archive (if specs were involved)
-```
+- **Do not modify code on Day 1.** Spend the day understanding the codebase.
+- **Each task must have a verification step.** Don't approve vague plans.
+- **3-Strike Rule:** If a task fails 3 times, stop and redesign — don't brute-force.
+- **Impact > 3 modules → split into smaller PRs.**
+- **If Layer 2 fails**, fix the code (not the spec) and re-run.
 
 ---
 
@@ -744,41 +536,23 @@ Run `make mine` (which runs `mempalace mine ~/chats/ --mode convos`):
 
 ## 7. Common Mistakes
 
-### Planning Mistakes
+The most critical mistakes to avoid. For tool-specific anti-patterns, see
+[2-workflow-guide.md](2-workflow-guide.md) Section 2. For mindset questions, see
+[5-faq.md](5-faq.md).
 
-| Don't | Do | Why |
-|---|---|---|
-| Start coding before writing specs | Run `/opsx:propose` first | Without specs, there is no way to verify the code is correct. You also lose the paper trail. |
-| Skip brainstorming | Run `/superpowers:brainstorm` | Brainstorming forces you to consider alternatives. The first approach is rarely the best one. |
-| Approve a plan without reviewing every task | Read each task and its verification step | Vague tasks lead to vague code. Each task must be specific, atomic (2–5 min), and verifiable. |
-| Skip impact analysis | Query GitNexus + Graphify + MemPalace | You might break something in a module you did not know existed. Past attempts may reveal pitfalls. |
-
-### Execution Mistakes
-
-| Don't | Do | Why |
-|---|---|---|
-| Make multiple changes in one commit | One commit per task from the plan | If something breaks, you can identify and revert the exact commit that caused it. |
-| Push without 3-layer review | Run all three layers every time | Layer 1 catches methodology issues, Layer 2 catches spec drift, Layer 3 keeps the knowledge graph accurate. |
-| Continue after 3 failures on the same task | Stop and do an architectural review | Repeated failure usually means the task is poorly designed or the approach is wrong — not that you need to try harder. |
-| Trust AI output without review | AI writes → Superpowers reviews → you approve | AI can generate plausible-looking code that is subtly wrong. Always review. |
-| Create PRs larger than 400 lines | Split into smaller PRs | Large PRs are harder to review and more likely to introduce undetected issues. |
-
-### Memory Mistakes
-
-| Don't | Do | Why |
-|---|---|---|
-| Dump knowledge into CLAUDE.md | CLAUDE.md = rules only. Use claude-mem for sessions, MemPalace for decisions. | CLAUDE.md is loaded into every conversation. Putting knowledge there wastes context window. |
-| Use MemPalace for session recall | Let claude-mem handle it — it is automatic | MemPalace is for deliberate, permanent knowledge, not "what did I do yesterday." |
-| Use claude-mem for architecture decisions | Store decisions in MemPalace | claude-mem uses lossy compression. Important reasoning chains can be lost. MemPalace stores verbatim. |
-| Forget to mine MemPalace | Run `make mine` weekly | Decisions buried in chat logs are lost knowledge. Mining extracts and preserves them. |
-
-### Maintenance Mistakes
-
-| Don't | Do | Why |
-|---|---|---|
-| Forget to re-index after merging | Run `make index` after every merge | An outdated knowledge graph gives wrong answers to impact analysis questions. |
-| Install the full ECC plugin | Cherry-pick only: AgentShield + hooks + language skills | The full plugin reduces Claude's usable context from ~200K to ~70K tokens. |
-| Skip the AgentShield scan after config changes | Run `npx ecc-agentshield scan` | Config changes can accidentally expose secrets or weaken security rules. |
+| Don't | Do |
+|---|---|
+| Code before specs | `/opsx:propose` first — specs are the verification contract |
+| Skip brainstorm | `/superpowers:brainstorm` even for "simple" tasks |
+| Approve vague plans | Every task needs a verification step |
+| Multiple changes per commit | 1 commit per task |
+| Push without 3-layer review | `make review` every time |
+| Continue after 3 task failures | Stop → redesign → resume |
+| PRs > 400 lines | Split by layer, module, or feature flag |
+| Dump knowledge into CLAUDE.md | CLAUDE.md = rules. claude-mem = sessions. MemPalace = decisions |
+| Skip `make index` after merge | Knowledge graph goes stale → wrong impact analysis |
+| Install full ECC plugin | Cherry-pick only (AgentShield + hooks + skills) |
+| Bypass hooks with `--no-verify` | Investigate the hook trigger first |
 
 ---
 
