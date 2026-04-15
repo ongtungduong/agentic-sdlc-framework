@@ -1,7 +1,7 @@
-# VSAF INSTRUCTION — Advanced Usage Guide
+# ASF INSTRUCTION — Advanced Usage Guide
 
 > **Audience:** Developers new to this repo AND new to Claude Code.
-> **Goal:** Teach you how to *wield* the 8 VSAF tools together, not just run their commands.
+> **Goal:** Teach you how to *wield* the 8 ASF tools together, not just run their commands.
 > **Complements:** [1-setup-guide.md](1-setup-guide.md) (install + overview). Read that first if you haven't.
 > **See also:** [README.md](../../README.md) (project overview) · [3-cheatsheet.md](3-cheatsheet.md) (1-page command ref) · [4-milestones.md](4-milestones.md) (Day 1/Week 1/Month 1) · [5-faq.md](5-faq.md) (mindset FAQ)
 
@@ -27,7 +27,7 @@ This guide answers three questions the overview doesn't:
 
 ### The Mental Model
 
-Forget "AI autocomplete." VSAF treats Claude Code as a disciplined team member who must:
+Forget "AI autocomplete." ASF treats Claude Code as a disciplined team member who must:
 
 ```
     SPEC  ─────►  PLAN  ─────►  TDD  ─────►  3-LAYER REVIEW  ─────►  SHIP
@@ -199,7 +199,7 @@ Each tool section follows the same five-part structure: **Purpose → When it's 
 **Combines with:**
 - Impact analysis *before* Superpowers `write-plan` — your plan needs to cover d=1 callers.
 - `detect_changes` *before* every commit in `execute-plan`.
-- MCP resources (`gitnexus://repo/vsaf/process/<name>`) give step-by-step execution traces — feed those into `systematic-debugging`.
+- MCP resources (`gitnexus://repo/asf/process/<name>`) give step-by-step execution traces — feed those into `systematic-debugging`.
 
 ---
 
@@ -343,7 +343,7 @@ Five composite workflows. Each uses multiple tools in a specific order. Memorize
 2. /graphify query "how does <feature> work?"   # Natural-language corpus query
 3. gitnexus_query({query: "<feature keywords>"}) # Call-graph flows
 4. gitnexus_context({name: "<entrypoint>"})     # 360° view of the suspect symbol
-5. READ gitnexus://repo/vsaf/process/<name>     # Step-by-step execution trace
+5. READ gitnexus://repo/asf/process/<name>     # Step-by-step execution trace
 6. mempalace_search("why <feature>")            # Historical rationale
 ```
 
@@ -373,7 +373,7 @@ Five composite workflows. Each uses multiple tools in a specific order. Memorize
 2. claude-mem:mem-search "<error message>"                # Have we seen this before?
 3. gitnexus_query({query: "<symptom>"})                   # Find related execution flows
 4. gitnexus_context({name: "<suspect function>"})         # See callers/callees
-5. READ gitnexus://repo/vsaf/process/<processName>        # Trace the flow
+5. READ gitnexus://repo/asf/process/<processName>        # Trace the flow
 6. /superpowers:systematic-debugging                      # Hypothesis → experiment → conclusion
 7. gitnexus_detect_changes({scope: "compare", base_ref: "main"})  # What changed on this branch?
 8. [fix]  /superpowers:test-driven-development            # Write a failing test first
@@ -427,7 +427,7 @@ See Section 4 for a full worked example of this playbook.
 
 **Context:** Security team flagged that long-lived access tokens are a risk. We need to implement short-lived access tokens (15 min) with refresh tokens that rotate on use (reuse-detection revokes the whole family).
 
-This walkthrough shows every VSAF tool in one continuous flow. Real commands, realistic output snippets, and the gotchas a new dev will hit.
+This walkthrough shows every ASF tool in one continuous flow. Real commands, realistic output snippets, and the gotchas a new dev will hit.
 
 ---
 
@@ -462,7 +462,7 @@ Followed by:
 ```
 gitnexus_query({query: "token issuance"})
 gitnexus_context({name: "issueAccessToken"})
-READ gitnexus://repo/vsaf/process/login-flow
+READ gitnexus://repo/asf/process/login-flow
 ```
 
 Finally, check prior art:

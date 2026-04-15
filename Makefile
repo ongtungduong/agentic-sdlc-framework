@@ -1,4 +1,4 @@
-# VSAF v3 — Agentic AI SDLC Framework
+# ASF — Agentic SDLC Framework
 # Day-to-day operations via Make targets.
 # Run `make help` for available commands.
 
@@ -12,8 +12,8 @@ help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
-setup: ## Run full VSAF setup (install all tools)
-	@bash scripts/setup-vsaf.sh
+setup: ## Run full ASF setup (install all tools)
+	@bash scripts/setup-asf.sh
 
 # ── Knowledge Graph ────────────────────────────────────────────────────────────
 

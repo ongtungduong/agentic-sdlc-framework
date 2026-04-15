@@ -1,7 +1,7 @@
-# VSAF — Developer Onboarding Guide
+# ASF — Developer Onboarding Guide
 
-> A complete guide for developers new to the VSAF framework.
-> Covers what VSAF is, how to install it, and how to use it day-to-day.
+> A complete guide for developers new to the ASF framework.
+> Covers what ASF is, how to install it, and how to use it day-to-day.
 
 ### Related Docs
 
@@ -17,7 +17,7 @@
 
 ## Table of Contents
 
-1. [What is VSAF?](#1-what-is-vsaf)
+1. [What is ASF?](#1-what-is-asf)
 2. [How the Tools Fit Together](#2-how-the-tools-fit-together)
 3. [Prerequisites](#3-prerequisites)
 4. [Installation](#4-installation)
@@ -29,9 +29,9 @@
 
 ---
 
-## 1. What is VSAF?
+## 1. What is ASF?
 
-VSAF (Version-controlled Spec-driven Agentic Framework) is a development
+ASF (Agentic SDLC Framework) is a development
 framework built around Claude Code. It turns "ask the AI, copy-paste the output,
 hope it works" into a structured, repeatable process:
 
@@ -46,7 +46,7 @@ hope it works" into a structured, repeatable process:
 
 ### The 4-Layer Architecture
 
-VSAF organizes its 8 tools into four layers. Each layer handles a different
+ASF organizes its 8 tools into four layers. Each layer handles a different
 concern:
 
 ```
@@ -143,12 +143,12 @@ background:
   applies automatically
 
 > **Why "cherry-pick"?** The full ECC plugin consumes too much of Claude's
-> context window (reduces usable context from ~200K to ~70K tokens). VSAF
+> context window (reduces usable context from ~200K to ~70K tokens). ASF
 > installs only three components: AgentShield, hooks, and language skills.
 
 ### The Dual Memory Model
 
-VSAF uses two memory systems because they solve different problems:
+ASF uses two memory systems because they solve different problems:
 
 | | claude-mem | MemPalace |
 |---|---|---|
@@ -187,7 +187,7 @@ big picture and finds structural problems. Always re-index both after a merge
 
 ## 3. Prerequisites
 
-Before installing VSAF, make sure you have the following on your system. For
+Before installing ASF, make sure you have the following on your system. For
 each item, there is a command you can run to verify.
 
 | Requirement | Minimum Version | Check Command |
@@ -229,7 +229,7 @@ pipx ensurepath
 If all prerequisites are installed, three commands set up everything:
 
 ```bash
-git clone <repo-url> && cd vsaf
+git clone <repo-url> && cd agentic-sdlc-framework
 make setup          # Installs all 8 tools (idempotent — safe to re-run)
 make status         # Verify everything is working
 ```
@@ -247,7 +247,7 @@ hood, in case you need to debug or install tools individually.
 
 ### What `make setup` Does (Step by Step)
 
-The setup script (`scripts/setup-vsaf.sh`) is idempotent: running it multiple
+The setup script (`scripts/setup-asf.sh`) is idempotent: running it multiple
 times is safe. It skips tools that are already installed.
 
 #### 4.1 BMAD Method
@@ -578,7 +578,7 @@ The most critical mistakes to avoid. For tool-specific anti-patterns, see
 | Term | Definition |
 |---|---|
 | **AST** | Abstract Syntax Tree — a tree representation of your source code's structure. Tools like GitNexus parse the AST to understand how code components relate to each other. |
-| **ECC** | Everything Claude Code — a community plugin for Claude Code. VSAF cherry-picks three components from it instead of installing the full plugin. |
+| **ECC** | Everything Claude Code — a community plugin for Claude Code. ASF cherry-picks three components from it instead of installing the full plugin. |
 | **FR / NFR** | Functional Requirement / Non-Functional Requirement. FRs describe what the system does ("user can log in"). NFRs describe how well it does it ("login responds within 200ms"). |
 | **KG** | Knowledge Graph — a database that stores relationships between entities (files, functions, classes, services). GitNexus and Graphify both build knowledge graphs. |
 | **MCP** | Model Context Protocol — a standard that lets AI models (like Claude) access external tools and data sources. GitNexus uses MCP to give Claude Code access to the code knowledge graph. |

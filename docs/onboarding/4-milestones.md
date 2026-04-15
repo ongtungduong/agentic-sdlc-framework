@@ -1,4 +1,4 @@
-# VSAF Onboarding Path
+# ASF Onboarding Path
 
 > Structured milestones for your first month. Each phase builds on the previous.
 

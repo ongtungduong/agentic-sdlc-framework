@@ -1,7 +1,7 @@
-# VSAF INSTRUCTION — Hướng dẫn vận dụng nâng cao
+# ASF INSTRUCTION — Hướng dẫn vận dụng nâng cao
 
 > **Đối tượng:** Dev mới join repo này VÀ lần đầu dùng Claude Code.
-> **Mục tiêu:** Dạy bạn *vận dụng* 8 tool của VSAF phối hợp với nhau, không chỉ chạy command.
+> **Mục tiêu:** Dạy bạn *vận dụng* 8 tool của ASF phối hợp với nhau, không chỉ chạy command.
 > **Bổ trợ cho:** [1-setup-guide.md](1-setup-guide.md) (install + tổng quan). Đọc file đó trước nếu chưa.
 > **Xem thêm:** [README.md](../../README.md) (tổng quan dự án) · [3-cheatsheet.md](3-cheatsheet.md) (tra cứu nhanh) · [4-milestones.md](4-milestones.md) (lộ trình Day 1/Week 1/Month 1) · [5-faq.md](5-faq.md) (FAQ tư duy)
 
@@ -27,7 +27,7 @@ Tài liệu này trả lời 3 câu hỏi mà file overview không trả lời:
 
 ### Mental Model
 
-Quên "AI autocomplete" đi. VSAF coi Claude Code như một thành viên team có kỷ luật, bắt buộc phải:
+Quên "AI autocomplete" đi. ASF coi Claude Code như một thành viên team có kỷ luật, bắt buộc phải:
 
 ```
     SPEC  ─────►  PLAN  ─────►  TDD  ─────►  REVIEW 3 LỚP  ─────►  SHIP
@@ -199,7 +199,7 @@ Mỗi phần có cấu trúc 5 mục cố định: **Mục đích → Khi nào B
 **Phối hợp với:**
 - Impact analysis *trước* Superpowers `write-plan` — plan của bạn phải cover d=1 caller.
 - `detect_changes` *trước* mọi commit trong `execute-plan`.
-- MCP resources (`gitnexus://repo/vsaf/process/<name>`) cho trace execution từng bước — feed vào `systematic-debugging`.
+- MCP resources (`gitnexus://repo/asf/process/<name>`) cho trace execution từng bước — feed vào `systematic-debugging`.
 
 ---
 
@@ -343,7 +343,7 @@ Năm workflow tổng hợp. Mỗi cái dùng nhiều tool theo thứ tự cụ t
 2. /graphify query "feature X hoạt động ra sao?" # Query corpus bằng ngôn ngữ tự nhiên
 3. gitnexus_query({query: "<từ khóa feature>"}) # Flow call-graph
 4. gitnexus_context({name: "<entrypoint>"})     # View 360° symbol nghi vấn
-5. READ gitnexus://repo/vsaf/process/<name>     # Trace execution từng bước
+5. READ gitnexus://repo/asf/process/<name>     # Trace execution từng bước
 6. mempalace_search("tại sao <feature>")        # Lý do lịch sử
 ```
 
@@ -373,7 +373,7 @@ Năm workflow tổng hợp. Mỗi cái dùng nhiều tool theo thứ tự cụ t
 2. claude-mem:mem-search "<error message>"                 # Đã gặp chưa?
 3. gitnexus_query({query: "<triệu chứng>"})                # Tìm execution flow liên quan
 4. gitnexus_context({name: "<function nghi vấn>"})         # Xem caller/callee
-5. READ gitnexus://repo/vsaf/process/<processName>         # Trace flow
+5. READ gitnexus://repo/asf/process/<processName>         # Trace flow
 6. /superpowers:systematic-debugging                       # Hypothesis → experiment → conclusion
 7. gitnexus_detect_changes({scope: "compare", base_ref: "main"})  # Branch này đã thay đổi gì?
 8. [fix]  /superpowers:test-driven-development             # Viết test fail trước
@@ -427,7 +427,7 @@ Xem Section 4 cho ví dụ đầy đủ của playbook này.
 
 **Bối cảnh:** Security team flag access token dài hạn là rủi ro. Cần implement access token ngắn (15 phút) với refresh token rotate mỗi lần dùng (phát hiện reuse sẽ revoke cả family).
 
-Walkthrough này show mọi tool VSAF trong 1 flow liên tục. Command thật, snippet output thực tế, và các gotcha dev mới sẽ đụng.
+Walkthrough này show mọi tool ASF trong 1 flow liên tục. Command thật, snippet output thực tế, và các gotcha dev mới sẽ đụng.
 
 ---
 
@@ -462,7 +462,7 @@ Tiếp theo:
 ```
 gitnexus_query({query: "token issuance"})
 gitnexus_context({name: "issueAccessToken"})
-READ gitnexus://repo/vsaf/process/login-flow
+READ gitnexus://repo/asf/process/login-flow
 ```
 
 Cuối cùng, check tiền lệ:

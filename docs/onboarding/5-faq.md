@@ -1,4 +1,4 @@
-# VSAF FAQ
+# ASF FAQ
 
 > Answers to the questions every new developer asks — about mindset, not commands.
 > For tool commands, see [3-cheatsheet.md](3-cheatsheet.md).
@@ -40,7 +40,7 @@ one.
 
 ### Can I write code first and spec later?
 
-No. This is the #1 anti-pattern in VSAF. Without a spec, Layer 2 (`make verify`)
+No. This is the #1 anti-pattern in ASF. Without a spec, Layer 2 (`make verify`)
 has nothing to verify against, so you have no way to catch spec drift. Specs
 are not overhead — they are the contract that makes automated verification
 possible.
@@ -146,7 +146,7 @@ Instead:
 
 ---
 
-### Can I use VSAF for non-code tasks (docs, configs, infra)?
+### Can I use ASF for non-code tasks (docs, configs, infra)?
 
 Yes. The workflow scales down:
 - **Doc changes**: Quick Flow. Brainstorm → plan → write → review.
@@ -163,7 +163,7 @@ but the brainstorm → plan → review pattern always applies.
 ### What if my PR is over 400 lines?
 
 Split it. Large PRs are harder to review and more likely to introduce undetected
-issues. This is a hard rule in VSAF, not a suggestion.
+issues. This is a hard rule in ASF, not a suggestion.
 
 Strategies for splitting:
 - **By layer**: data model first, service layer second, API third.
@@ -175,7 +175,7 @@ Each sub-PR should pass `make verify` and `make scan` independently.
 
 ---
 
-### Why does VSAF have so many tools? Isn't this over-engineered?
+### Why does ASF have so many tools? Isn't this over-engineered?
 
 Each tool solves a specific problem that the others don't:
 
