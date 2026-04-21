@@ -66,10 +66,10 @@
       "Bash(npx:*)",
       "Bash(make:*)",
       "Bash(python:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(rm -rf:*)"
     ],
     "deny": [
-      "Bash(rm -rf:*)",
       "Bash(rm -r /:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
