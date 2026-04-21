@@ -85,76 +85,76 @@ See `CLAUDE.md` for the full workflow rules and quick-reference command table.
 
 ## Example: Building a New Feature
 
-**Scenario:** Thêm tính năng "export báo cáo ra PDF".
+**Scenario:** Add a feature to "export reports to PDF".
 
 ---
 
-**Step 1 — Spec** · *Bạn làm*
+**Step 1 — Spec** · *You do this*
 
 ```
-/opsx:propose export báo cáo ra PDF
+/opsx:propose export reports to PDF
 ```
 
-> AI tạo spec file với danh sách tasks, edge cases, acceptance criteria. Bạn review và approve.
+> AI creates a spec file with task lists, edge cases, and acceptance criteria. You review and approve.
 
 ---
 
-**Step 2 — Impact Analysis** · *AI làm tự động*
+**Step 2 — Impact Analysis** · *AI runs this automatically*
 
-AI chạy GitNexus để tìm các module bị ảnh hưởng:
+AI runs GitNexus to find affected modules:
 
 ```
 gitnexus_impact({target: "ReportService", direction: "upstream"})
 ```
 
-> AI báo cáo: "3 module phụ thuộc vào ReportService. Recommend tách thành 2 PR."
-> Bạn quyết định: tách PR hay giữ nguyên.
+> AI reports: "3 modules depend on ReportService. Recommend splitting into 2 PRs."
+> You decide: split the PR or keep it as one.
 
 ---
 
-**Step 3 — Brainstorm + Plan** · *AI dẫn dắt, bạn approve*
+**Step 3 — Brainstorm + Plan** · *AI guides, you approve*
 
 ```
 /superpowers:brainstorm
 ```
 
-> AI đề xuất 3 approach (wkhtmltopdf / Puppeteer / server-side LaTeX), phân tích trade-off, recommend Puppeteer.
-> Bạn chọn approach → AI tạo implementation plan với từng task 2–5 phút.
-> Bạn review plan, approve.
+> AI proposes 3 approaches (wkhtmltopdf / Puppeteer / server-side LaTeX), analyzes trade-offs, and recommends Puppeteer.
+> You choose an approach → AI creates an implementation plan with 2-5 minute tasks.
+> You review the plan and approve.
 
 ---
 
-**Step 4 — Execute** · *AI làm, bạn theo dõi*
+**Step 4 — Execute** · *AI does it, you monitor*
 
 ```
 /superpowers:execute-plan
 ```
 
-> AI code từng task theo TDD (viết test trước, implement sau), commit sau mỗi task.
-> Nếu task fail 3 lần, AI dừng lại và báo cáo để bạn quyết định hướng đi.
+> AI codes each task using TDD (write tests first, implement after), and commits after each task.
+> If a task fails 3 times, AI stops and reports back so you can decide the direction.
 
 ---
 
-**Step 5 — Review + Ship** · *AI làm, bạn approve merge*
+**Step 5 — Review + Ship** · *AI does it, you approve merge*
 
 ```
 /superpowers:code-review   # AI review methodology
-make verify                # OpenSpec kiểm tra spec compliance
-make scan                  # AgentShield quét bảo mật
+make verify                # OpenSpec verifies spec compliance
+make scan                  # AgentShield runs security scans
 git push origin feature/export-pdf
 ```
 
-> Bạn review PR, merge.
+> You review the PR and merge.
 
 ---
 
-| Bước | Con người | AI |
+| Step | Human | AI |
 |---|---|---|
-| Spec | Mô tả feature, approve spec | Tạo spec, edge cases |
-| Impact | Quyết định có split PR không | Chạy blast radius analysis |
-| Brainstorm | Trả lời câu hỏi, chọn approach, approve plan | Đề xuất options, tạo plan |
-| Execute | Theo dõi, unblock nếu AI stuck | Code, test, commit từng task |
-| Review | Review PR, approve merge | Chạy 3-layer review, scan bảo mật |
+| Spec | Describe the feature, approve spec | Create spec and edge cases |
+| Impact | Decide whether to split PRs | Run blast radius analysis |
+| Brainstorm | Answer questions, choose approach, approve plan | Propose options, create plan |
+| Execute | Monitor and unblock if AI gets stuck | Code, test, and commit each task |
+| Review | Review PR and approve merge | Run 3-layer review and security scan |
 
 ---
 
