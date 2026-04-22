@@ -1,20 +1,28 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# OpenSpec workspace for the ask-ranger kit itself.
+# Target repos get their own openspec/ via `openspec init` during setup.sh.
+context: |
+  ask-ranger is a scaffolding kit — not an application. It's a pile of shell
+  scripts, bats tests, Makefiles, and markdown prompts that wire five tools
+  together (OpenSpec, GitNexus, Claude Code, Superpowers, AgentShield) into a
+  spec-driven workflow for solo developers.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Spec changes typically touch one of:
+    - scripts/setup.sh        (install behavior)
+    - scripts/sync-platforms.sh (canonical → per-platform generation)
+    - template/CLAUDE.md / template/AGENTS.md (AI system prompts)
+    - template/workflows/<skill>/SKILL.md (canonical opsx workflow source)
+    - template/vendor/ecc-hooks/* (pinned AgentShield hooks)
+
+  Non-goals: feature-rich tooling, GUI, multi-user teams.
+
+rules:
+  proposal:
+    - State the target file or subsystem in the first sentence.
+    - Call out breaking changes to target-repo users explicitly.
+    - Include a "Non-goals" section.
+  tasks:
+    - Every task must be verifiable with `bats tests/`, `shellcheck`,
+      or `bash scripts/sync-platforms.sh` producing no drift.
+    - No task should exceed 5 minutes of focused work.
