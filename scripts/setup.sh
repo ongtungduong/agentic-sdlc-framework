@@ -103,12 +103,12 @@ BACKUP="$SETTINGS.bak.$(date +%Y%m%d%H%M%S)"
 cp "$SETTINGS" "$BACKUP"
 info "Backed up existing settings to $BACKUP"
 
-ECC_DIR=$(mktemp -d)
-ECC_LOG=$(mktemp)
-trap 'rm -rf "$ECC_DIR" "$ECC_LOG"' EXIT
-
-if git clone --depth 1 https://github.com/affaan-m/everything-claude-code.git "$ECC_DIR" 2>"$ECC_LOG" \
-   && [ -f "$ECC_DIR/hooks/hooks.json" ]; then
+# Vendored at a pinned SHA — see vendor/ecc-hooks/README.md for the refresh process.
+VENDOR_HOOKS="$ASK_DIR/vendor/ecc-hooks/hooks.json"
+if [ -f "$VENDOR_HOOKS" ]; then
+    if [ -f "$ASK_DIR/vendor/ecc-hooks/SOURCE_SHA" ]; then
+        info "Using vendored ECC hooks at SHA $(cat "$ASK_DIR/vendor/ecc-hooks/SOURCE_SHA")"
+    fi
     MERGE_ERR=$(mktemp)
     MERGED=$(jq -s '
         .[0] * {
@@ -117,7 +117,7 @@ if git clone --depth 1 https://github.com/affaan-m/everything-claude-code.git "$
                 PostToolUse: (((.[0].hooks.PostToolUse // []) + (.[1].hooks.PostToolUse // [])) | unique_by(.description))
             }
         }
-    ' "$SETTINGS" "$ECC_DIR/hooks/hooks.json" 2>"$MERGE_ERR") || MERGED=""
+    ' "$SETTINGS" "$VENDOR_HOOKS" 2>"$MERGE_ERR") || MERGED=""
     if [ -n "$MERGED" ]; then
         echo "$MERGED" > "$SETTINGS"
         ok "AgentShield hooks merged (restore with: cp $BACKUP $SETTINGS)"
@@ -128,10 +128,8 @@ if git clone --depth 1 https://github.com/affaan-m/everything-claude-code.git "$
     fi
     rm -f "$MERGE_ERR"
 else
-    warn "Could not fetch ECC hooks — skipping. git stderr:"
-    cat "$ECC_LOG" >&2
+    warn "Vendored hooks not found at $VENDOR_HOOKS — skipping AgentShield setup"
 fi
-rm -rf "$ECC_DIR" "$ECC_LOG"
 
 # ---------------------------------------------------------------------------
 # 4. Copy ask-ranger config to TARGET (skip if TARGET == ASK_DIR)
@@ -148,7 +146,7 @@ if [ "$TARGET" != "$ASK_DIR" ]; then
     done
 
     # Skip if exists — preserve target's customizations
-    for p in Makefile githooks scripts workflows .claude .github .agent docs; do
+    for p in Makefile githooks scripts workflows vendor .claude .github .agent docs; do
         if [ -e "$TARGET/$p" ]; then
             skip "$p already exists"
         elif [ -e "$ASK_DIR/$p" ]; then

@@ -1,0 +1,102 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  sync-drift:
+    name: Generated workflow files match canonical source
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate platform files
+        run: bash scripts/sync-platforms.sh
+      - name: Fail if generated files changed
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Generated workflow files are out of sync with workflows/."
+            echo "Run 'make sync' locally and commit the changes."
+            git --no-pager diff --stat
+            git --no-pager diff | head -200
+            exit 1
+          fi
+
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Run shellcheck
+        run: |
+          shellcheck \
+            scripts/setup.sh \
+            scripts/sync-platforms.sh \
+            scripts/session-end-check.sh \
+            scripts/hooks/gitleaks-precheck.sh \
+            githooks/pre-push
+
+  bats-tests:
+    name: Bats tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install bats
+        run: sudo apt-get update && sudo apt-get install -y bats jq
+      - name: Run tests
+        run: bats tests/
+
+  setup-smoke:
+    name: Setup smoke test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install jq (macOS)
+        if: runner.os == 'macOS'
+        run: brew install jq gitleaks || true
+      - name: Install jq + gitleaks (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Prepare scratch target repo
+        id: scratch
+        run: |
+          TARGET="$RUNNER_TEMP/ask-ranger-target"
+          mkdir -p "$TARGET"
+          git -C "$TARGET" init -q
+          git -C "$TARGET" config user.email ci@example.com
+          git -C "$TARGET" config user.name CI
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+      - name: Run setup against scratch target
+        run: bash scripts/setup.sh "${{ steps.scratch.outputs.target }}"
+      - name: Assert key files were copied
+        env:
+          TARGET: ${{ steps.scratch.outputs.target }}
+        run: |
+          test -f "$TARGET/CLAUDE.md"         || { echo "missing CLAUDE.md"; exit 1; }
+          test -f "$TARGET/AGENTS.md"         || { echo "missing AGENTS.md"; exit 1; }
+          test -f "$TARGET/Makefile"          || { echo "missing Makefile"; exit 1; }
+          test -d "$TARGET/scripts"           || { echo "missing scripts/"; exit 1; }
+          test -d "$TARGET/workflows"         || { echo "missing workflows/"; exit 1; }
+          test -d "$TARGET/vendor/ecc-hooks"  || { echo "missing vendor/ecc-hooks/"; exit 1; }
+          test -x "$TARGET/githooks/pre-push" || { echo "pre-push not executable"; exit 1; }
+          HOOKS=$(git -C "$TARGET" config --get core.hooksPath)
+          [ "$HOOKS" = "githooks/" ] || { echo "core.hooksPath not set"; exit 1; }
+          echo "All key files present; core.hooksPath=$HOOKS"

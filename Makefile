@@ -2,7 +2,7 @@
 # Day-to-day operations via Make targets.
 # Run `make help` for available commands.
 
-.PHONY: help setup sync update update-prompts index scan scan-deep check-artifacts review review-checklist archive status clean
+.PHONY: help setup sync test update update-prompts index scan scan-deep check-artifacts review review-checklist archive status clean
 
 SHELL := /bin/bash
 
@@ -17,6 +17,11 @@ setup: sync ## Setup ask-ranger. Current dir by default, or: make setup TARGET=/
 
 sync: ## Regenerate platform-specific workflow files from canonical workflows/
 	@bash scripts/sync-platforms.sh
+
+test: ## Run bats test suite (requires bats + jq)
+	@command -v bats >/dev/null || { echo "bats not found. macOS: brew install bats-core. Linux: sudo apt install bats"; exit 1; }
+	@command -v jq   >/dev/null || { echo "jq not found.   macOS: brew install jq.         Linux: sudo apt install jq"; exit 1; }
+	bats tests/
 
 update-prompts: ## Pull latest CLAUDE.md + AGENTS.md only (Makefile/hooks/skills NOT updated)
 	@bash scripts/setup.sh "$(TARGET)"
