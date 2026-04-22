@@ -38,11 +38,13 @@ step "Checking prerequisites"
 for cmd in node npm git; do
     command -v "$cmd" >/dev/null || fail "$cmd not found — install it first"
 done
+NODE_VER=$(node -v | sed 's/v//' | cut -d. -f1)
+[ "$NODE_VER" -ge 18 ] || fail "Node.js $(node -v) found — v18+ required. Install from https://nodejs.org/"
 if ! command -v jq &>/dev/null; then
     info "jq missing — installing..."
     case "$(uname -s)" in
-        Darwin) brew install jq >/dev/null ;;
-        Linux)  sudo apt install -y jq >/dev/null ;;
+        Darwin) brew install jq >/dev/null || fail "jq install failed — install manually: brew install jq" ;;
+        Linux)  sudo apt install -y jq >/dev/null || fail "jq install failed — install manually: sudo apt install jq" ;;
         *)      fail "Install jq manually" ;;
     esac
 fi
@@ -73,6 +75,7 @@ SETTINGS="$HOME/.claude/settings.json"
 [ ! -f "$SETTINGS" ] && echo '{}' > "$SETTINGS"
 
 ECC_DIR=$(mktemp -d)
+trap 'rm -rf "$ECC_DIR"' EXIT
 if git clone --depth 1 https://github.com/affaan-m/everything-claude-code.git "$ECC_DIR" 2>/dev/null \
    && [ -f "$ECC_DIR/hooks/hooks.json" ]; then
     MERGED=$(jq -s '
@@ -145,7 +148,7 @@ ok "core.hooksPath = githooks/"
 # 6. OpenSpec init in target
 # ---------------------------------------------------------------------------
 step "Initializing OpenSpec in target"
-if [ -f "$TARGET/openspec/config.yaml" ]; then
+if [ -d "$TARGET/openspec" ]; then
     skip "OpenSpec already initialized"
 else
     (cd "$TARGET" && openspec init) && ok "OpenSpec initialized"

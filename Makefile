@@ -13,7 +13,7 @@ help: ## Show this help
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Setup ASF. Current dir by default, or: make setup TARGET=/path/to/repo
-	@bash scripts/setup.sh $(TARGET)
+	@bash scripts/setup.sh "$(TARGET)"
 
 # ── Knowledge Graph ────────────────────────────────────────────────────────────
 
