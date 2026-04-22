@@ -22,5 +22,9 @@ Thumbs.db
 # GitNexus index (local state)
 .gitnexus/
 
+# GitNexus auto-writes skills here when indexing the kit root; the
+# canonical versions already live under template/.claude/skills/gitnexus/.
+.claude/skills/
+
 # Git worktrees
 .worktrees/
