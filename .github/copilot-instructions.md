@@ -1,6 +1,6 @@
-# asf-devflow — GitHub Copilot Instructions
+# ask-ranger — GitHub Copilot Instructions
 
-This project uses **asf-devflow** — the lite edition of the ASF (Agentic SDLC Framework), a 5-tool spec-driven workflow for solo developers.
+This project uses **ask-ranger** — the Agentic SDLC Kit (ASK), a 5-tool spec-driven workflow for solo developers.
 
 **Stack:** OpenSpec | GitNexus (MCP) | Claude Code + Superpowers + AgentShield
 

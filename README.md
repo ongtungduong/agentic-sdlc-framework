@@ -1,8 +1,8 @@
-# asf-devflow
+# ask-ranger
 
 A spec-driven development framework for solo developers. Write specs first, execute with AI, review in 3 layers.
 
-Part of the **ASF (Agentic SDLC Framework)** family — lite edition, targeting individual developers working on personal projects.
+**ask-ranger** is the **ASK (Agentic SDLC Kit)** — a lightweight setup for individual developers working on personal projects.
 
 **Stack:** OpenSpec · GitNexus (MCP) · Claude Code + Superpowers + AgentShield  
 **Cost:** $20/month (Claude Code subscription) — all other tools are free  
@@ -27,13 +27,13 @@ See [GETTING_STARTED.md](GETTING_STARTED.md) for a step-by-step walkthrough.
 Requires **Node.js ≥ 18**, **Git**, and **jq**.
 
 ```bash
-git clone <this-repo> asf-devflow
+git clone <this-repo> ask-ranger
 
 # Apply to an existing repo:
-make -C asf-devflow setup TARGET=/path/to/your-repo
+make -C ask-ranger setup TARGET=/path/to/your-repo
 
-# Or use asf-devflow itself as your working repo:
-cd asf-devflow && make setup
+# Or use ask-ranger itself as your working repo:
+cd ask-ranger && make setup
 ```
 
 One manual step inside your AI tool:
@@ -54,7 +54,7 @@ make status
 |---|---|
 | `CLAUDE.md`, `AGENTS.md` | Always overwritten (AI system prompts) |
 | `Makefile`, `githooks/`, `.claude/`, `.github/`, `.agent/`, `docs/` | Copied only if not present |
-| `.gitignore` | asf-devflow entries appended once |
+| `.gitignore` | ask-ranger entries appended once |
 | `core.hooksPath` | Set to `githooks/` |
 | OpenSpec | Initialized in target repo |
 | GitNexus | Codebase indexed |
@@ -62,7 +62,7 @@ make status
 
 ### Updating
 
-When asf-devflow releases updates, pull the latest system prompts:
+When ask-ranger releases updates, pull the latest system prompts:
 
 ```bash
 make update
@@ -76,7 +76,7 @@ This overwrites `CLAUDE.md` and `AGENTS.md`. Other files (Makefile, hooks, etc.)
 
 | Command | What It Does |
 |---|---|
-| `make update` | Pull latest CLAUDE.md + AGENTS.md from asf-devflow |
+| `make update` | Pull latest CLAUDE.md + AGENTS.md from ask-ranger |
 | `make index` | Re-index codebase (GitNexus) — run after every merge |
 | `make check-artifacts` | Check OpenSpec artifact completeness |
 | `make review` | Run full 3-layer review |
@@ -115,10 +115,3 @@ This overwrites `CLAUDE.md` and `AGENTS.md`. Other files (Makefile, hooks, etc.)
 ├── GETTING_STARTED.md       # Step-by-step first-feature guide
 └── Makefile                 # All day-to-day operations
 ```
-
----
-
-## Related
-
-- **asf-devflow** (this repo) — lite edition for solo developers
-- **asf-enterprise** (planned) — team edition with BMAD-based multi-agent orchestration

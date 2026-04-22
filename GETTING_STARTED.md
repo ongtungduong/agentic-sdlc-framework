@@ -1,4 +1,4 @@
-# Getting Started with asf-devflow
+# Getting Started with ask-ranger
 
 This guide walks you through your first feature using the 5-step workflow.
 
@@ -125,7 +125,7 @@ For GitHub Copilot: agent instructions are in `.github/copilot-instructions.md` 
 | `make check-artifacts` | Before shipping — confirm spec artifacts are complete |
 | `make scan` | Before every push |
 | `make review` | Full 3-layer review before PR |
-| `make update` | Pull latest CLAUDE.md + AGENTS.md from asf-devflow |
+| `make update` | Pull latest CLAUDE.md + AGENTS.md from ask-ranger |
 | `make status` | Check all tools are working |
 
 ---
